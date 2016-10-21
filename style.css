@@ -42,12 +42,31 @@ footer{
 	margin: 0;
     padding: 0;
     overflow: hidden;
-	position: fixed;
+	position:absolute;
 	bottom: 0;
 	background-color: black;
 	width: 99%;
 }
-p{
+#footer{
 text-align: center;
 color: white;
+}
+#logo{
+    display: block;
+    text-align: center;
+    margin: 10px;
+}
+#blurredIMG{
+    display: block;
+    text-align: center;
+    margin: 10px;
+}
+#bid{
+    display: block;
+    text-align: center;
+    margin: 15px;
+}
+#highBid{
+    display: block;
+    text-align: center;
 }

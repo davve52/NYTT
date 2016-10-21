@@ -9,7 +9,7 @@
 </head>
 <body>
     <header>
-        <img id="logo" src="suddigBud.png" alt="Suddig budgivning"></img>
+        <img id="logo" src="suddigBud.png" alt="Suddig budgivning">
     </header>
     <nav>
         <ul class="topnav">
@@ -20,14 +20,15 @@
     <main>
       <img id="blurredIMG" alt="Suddig bild">
       <p id="highBid">HÖGSTA BUD HÄR</p>
-      <form action="server.php" method="get">
-        <label>Ditt bud:</label><br>
+      <form id="bid" action="?????" method="post">
+        <label>Lägg ett bud:</label><br>
         <input type="text" name="bidValue" value="Bjud här"><br>
+        <input type="text" name="email" value="Ange din email"><br>
         <input type="submit" value="Submit">
       </form>
     </main>
     <footer >
-        <p>Posted by: Anders, David och Joakim</p>
+        <p id="footer">Posted by: Anders, David och Joakim</p>
     </footer>
 </body>
 </html>

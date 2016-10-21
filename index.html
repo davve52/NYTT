@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel= "stylesheet" type "text/css" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="calls.js"></script>
+    <title>Budgivning</title>
+</head>
+<body>
+    <header>
+        <img id="logo" src="suddigBud.png" alt="Suddig budgivning"></img>
+    </header>
+    <nav>
+        <ul class="topnav">
+            <li><a href="index.html">Vara of the day</a></li>
+            <li><a href="addItem.html">Lägg till vara</a></li>
+        </ul>
+    </nav>
+    <main>
+      <img id="blurredIMG" alt="Suddig bild">
+      <p id="highBid">HÖGSTA BUD HÄR</p>
+      <form action="server.php" method="get">
+        <label>Ditt bud:</label><br>
+        <input type="text" name="bidValue" value="Bjud här"><br>
+        <input type="submit" value="Submit">
+      </form>
+    </main>
+    <footer >
+        <p>Posted by: Anders, David och Joakim</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,21 @@
+
+The following files have been resolved:
+   org.eclipse.jetty:jetty-webapp:jar:9.3.6.v20151106:compile
+   org.eclipse.jetty.websocket:websocket-client:jar:9.3.6.v20151106:compile
+   org.eclipse.jetty:jetty-server:jar:9.3.6.v20151106:compile
+   org.eclipse.jetty:jetty-servlet:jar:9.3.6.v20151106:compile
+   javax.servlet:javax.servlet-api:jar:3.1.0:compile
+   org.eclipse.jetty:jetty-xml:jar:9.3.6.v20151106:compile
+   org.slf4j:slf4j-api:jar:1.7.13:compile
+   org.eclipse.jetty.websocket:websocket-api:jar:9.3.6.v20151106:compile
+   org.eclipse.jetty.websocket:websocket-servlet:jar:9.3.6.v20151106:compile
+   com.sparkjava:spark-core:jar:2.5:compile
+   com.google.collections:google-collections:jar:1.0:compile
+   org.eclipse.jetty:jetty-security:jar:9.3.6.v20151106:compile
+   org.slf4j:slf4j-simple:jar:1.7.2:compile
+   org.eclipse.jetty:jetty-util:jar:9.3.6.v20151106:compile
+   org.eclipse.jetty:jetty-http:jar:9.3.6.v20151106:compile
+   org.eclipse.jetty.websocket:websocket-server:jar:9.3.6.v20151106:compile
+   org.eclipse.jetty.websocket:websocket-common:jar:9.3.6.v20151106:compile
+   org.eclipse.jetty:jetty-io:jar:9.3.6.v20151106:compile
+

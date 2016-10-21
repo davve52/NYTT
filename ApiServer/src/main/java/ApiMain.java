@@ -1,17 +1,19 @@
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import static spark.Spark.*;
 
-import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.GetRequest;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import spark.Filter;
 import spark.Request;
@@ -22,19 +24,33 @@ import spark.Spark;
  * Created by davve on 2016-10-12.
  */
 public class ApiMain {
-    private static Image image;
-    private static String imagePatherino;
+    private static Image image = new Image();;
+    //private static Database database = new Database();
+    private static Boolean bool = true;
 
     public static void main(String[]args) throws ClassNotFoundException {
         ApiMain.apply();
-        Database database = new Database();
-        image = new Image();
-        get("/item", (request, response) -> {
-            itBridegeOpen();
-            imagePatherino = getRandomItem(database.fetchItems());
-            response.body(imagePatherino);
-            response.status(200);
-            request.headers("Accept");
+
+        get("/image", (request, response) -> {
+            String imageURL;
+            if (bool || isBridegeOpen()){
+                System.out.println("Första");
+
+                uploadImageToWebb();
+                imageURL = showImageToUser();
+                response.body(imageURL);
+                response.status(200);
+                request.headers("Accept");
+                bool= false;
+
+            } else{
+                System.out.println("VISA BARA BILDEN");
+                imageURL = showImageToUser();
+                response.body(imageURL);
+                response.status(200);
+                request.headers("Accept");
+            }
+
             return response.body(); // Skicka tillbaka svaret
         });
 
@@ -46,20 +62,33 @@ public class ApiMain {
         });
 
         put("/item/:itemId/update-price", (request, response) -> {
-            database.updatePrice(Integer.parseInt(request.queryParams("price")), Integer.parseInt(request.params(":itemId") ));
+          //  database.updatePrice();
             response.body("ANVÄNDARE BUDAR PÅ ITEM");
             response.status(200);
             request.headers("Accept");
             return response.body(); // Skicka tillbaka svaret
         });
+    }
 
-        delete("/item/:itemId", (request, response) -> {
-            database.deleteItem(Integer.parseInt(request.params(":itemId")));
-            response.body("Användaren tar bort vara");
-            response.status(200);
-            request.headers("Accept");
-            return response.body(); // Skicka tillbaka svaret
+    private static void startBackgroundWork() {
+        Thread t1 = new Thread(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (isBridegeOpen()) {
+
+                        uploadImageToWebb();
+
+                    }
+                }
+            }
+
         });
+        t1.start();
     }
 
     private static final HashMap<String, String> corsHeaders = new HashMap<String, String>();
@@ -91,67 +120,74 @@ public class ApiMain {
         try {
             response = Unirest.get("https://www.random.org/integers/?num=1&min=1&max="+size+"&col=1&base=10&format=plain&rnd=new");
 
-            System.out.println("Response from RANDOM NBR GENERATOR:");
             returnValue = response.asString().getBody();
 
-            /*Unirest.shutdown();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();*/
         } catch (UnirestException e) {
             e.printStackTrace();
         }
         return returnValue;
     }
 
-    private static Boolean itBridegeOpen(){
+    private static Boolean isBridegeOpen(){
         HttpResponse<JsonNode> response;
         Boolean bool = false;
 
         try {
             response = Unirest.get("http://data.goteborg.se/BridgeService/v1.0/GetGABOpenedStatus/8ff334db-2c18-4c35-b6bb-e191ad1f655d?format=Json").asJson();
 
-            System.out.println("Response from GÖTAELVEN:");
-            // retrieve the parsed JSONObject from the response
             JSONObject myObj = response.getBody().getObject();
             if(myObj.getBoolean("Value")){
-                bool = false;
-                System.out.println("BRON ÄR STÄNGD");
-            }
-            else {
                 bool = true;
                 System.out.println("BRON ÄR ÖPPEN");
             }
+            else {
+                bool = false;
+                System.out.println("BRON ÄR STÄNGD");
+            }
 
-            /*Unirest.shutdown();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();*/
         } catch (UnirestException e) {
             e.printStackTrace();
         }
         return bool;
     }
 
-    private static String getRandomItem(List<Item> items){
-        String randomItemValue = getRandomNumberApi(items.size());
-
-        String img = "";
-        int result = 0;
+    private static List<Item> getItemsFromAPI() {
+        HttpResponse<JsonNode> response;
+        List<Item> items = new ArrayList<Item>();
         try {
-            result = Integer.parseInt(String.valueOf(randomItemValue.charAt(0)));
-            System.out.println(result);
-        }catch (NumberFormatException e){
+            response = Unirest.get("http://ddwap.mah.se/ae3529/dittemitt/server.php?item=getItem").asJson();
+
+            JSONObject myObj = response.getBody().getObject();
+            JSONArray jsonArray = myObj.getJSONArray("item");
+            for (int i = 0; i<jsonArray.length(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Item item = new Item(jsonObject.getInt("ID"), jsonObject.getString("Title"),
+                        jsonObject.getString("Image"), jsonObject.getString("Description"), jsonObject.getString("Datee"));
+                items.add(item);
+            }
+
+        } catch (UnirestException e) {
             e.printStackTrace();
         }
-        for (int i = 0; i < items.size(); i ++){
-            if (result == items.get(i).getId()){
-                img = items.get(i).getImage();
+
+        return items;
+    }
+
+    private static void uploadImageToWebb(){
+        List<Item> list = getItemsFromAPI();
+        String random = getRandomNumberApi(list.size());
+        int randNbr = Integer.parseInt(String.valueOf(random.charAt(0)));
+
+        for (int i = 0; i < list.size(); i ++){
+            if (randNbr == list.get(i).getId()){
+                String img = list.get(i).getImage();
                 String imagePath = "http://ddwap.mah.se/ae3529/dittemitt/";
                 image.uploadImage(imagePath + img);
             }
         }
-        return image.getImage();
     }
 
+    private static String showImageToUser(){
+        return image.getImage();
+    }
 }

@@ -9,18 +9,16 @@ public class Item {
     private int id = 0;
     private String image = "";
     private String description = "";
-    private int currentBid = 0;
-    private Timestamp datee;
+    private String datee;
 
 
 
-    public Item(int id, String title, String image, String description, Timestamp datee, int currentBid){
+    public Item(int id, String title, String image, String description, String datee){
         this.id = id;
         this.title = title;
         this.image = image;
         this.description = description;
         this.datee = datee;
-        this.currentBid = currentBid;
     }
 
     public String getTitle(){
@@ -39,18 +37,9 @@ public class Item {
         return id;
     }
 
-    public String getStringId(){
-        return String.valueOf(id);
-    }
-
-    public Timestamp getDatee() {
+    public String getDatee() {
         return datee;
     }
-
-    public int getCurrentBid(){
-        return currentBid;
-    }
-
 
 
 }

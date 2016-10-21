@@ -26,59 +26,15 @@ public class Database{
         super.finalize();
     }
 
-    public List<Item> fetchItems() {
-        List<Item> items = new ArrayList<Item>();
-
-        try {
-            Statement statement = connection.createStatement();
-
-            ResultSet rs = statement.executeQuery("SELECT * FROM item");
-            while (rs.next()) {
-                Item item = new Item(rs.getInt("ID"), rs.getString("Title"), rs.getString("Image"),
-                        rs.getString("Description"), rs.getTimestamp("Datee"), rs.getInt("CurrentBid") );
-
-                items.add(item);
-            }
-
-            statement.close();
-        }
-         catch(SQLException e) {
-             e.printStackTrace();
-         }
-
-        return items;
-    }
-/*
-    public Item fetchItem(int id) {
-        Item item = null;
-        try{
-            Statement statement = connection.createStatement();
-
-            ResultSet rs = statement.executeQuery("SELECT FROM items WHERE ID = " + id);
-            if(rs.next()){
-                item = new Item(rs.getInt("ID"), rs.getInt("userID"), rs.getString("title"),rs.getString("image"),
-                        rs.getString("description"), rs.getInt("estimatedPrice"),rs.getString("datee"),rs.getString("tradeFor"),
-                        rs.getString("category"),rs.getString("city") );
-
-            }
-
-            statement.close();
-        } catch(SQLException e){
-            e.printStackTrace();
-        }
-
-        return item;
-    }
-*/
-
-    public void updatePrice(int price, int id){
+    public void updatePrice(String email, int price, String image){
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(
-                    "UPDATE Messages SET CurrentBid = ?, WHERE id = ?");
+                    "UPDATE bid SET Email = ?, Bid = ?, Image = ?");
 
-            ps.setInt(1,price);
-            ps.setInt(2,id);
+            ps.setString(1,email);
+            ps.setInt(2,price);
+            ps.setString(3,image);
 
             ps.executeUpdate();
             ps.close();
@@ -89,16 +45,24 @@ public class Database{
 
     }
 
-    public void deleteItem(int id) {
+    public List<Bid> getHighBidder(){
+        List<Bid> bids = new ArrayList<Bid>();
         try {
             Statement statement = connection.createStatement();
 
-            statement.executeUpdate("DELETE FROM items WHERE ID = " + id);
+            ResultSet rs = statement.executeQuery("SELECT * FROM bid");
+            while (rs.next()) {
+                Bid bid = new Bid(rs.getString("Email"), rs.getInt("Bid"), rs.getString("Image"));
+                bids.add(bid);
+            }
 
             statement.close();
-        } catch (SQLException e) {
+        }
+        catch(SQLException e) {
             e.printStackTrace();
         }
+        return bids;
     }
+
 }
 

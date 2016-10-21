@@ -1,6 +1,6 @@
 $(document).ready(function(){
     $.ajax({
-          url:"http://localhost:4567/item" ,
+          url:"http://localhost:4567/image" ,
           })
           .done(function (data) {
             console.log(data);

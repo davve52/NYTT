@@ -5,6 +5,7 @@
     <link rel= "stylesheet" type "text/css" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="calls.js"></script>
+    <script src="script.js"></script>
     <title>Budgivning</title>
 </head>
 <body>
@@ -21,11 +22,12 @@
       <img id="blurredIMG" alt="Suddig bild">
       <p id="highBid">HÖGSTA BUD HÄR</p>
       <p id="putBid">Lägg ditt bud här</p>
-      <form id="bid" action="?????" method="post">
+      <form id="bid" action="http://localhost:4567/bid" method="put">
         <label>Bjud här</label><br>
         <input type="text" name="bidValue"><br>
         <label>Ange din email här</label><br>
         <input type="text" name="email"><br>
+        <input type="hidden" name="image" value="hejsan">
         <input type="submit" value="Submit">
       </form>
     </main>

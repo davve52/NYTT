@@ -61,7 +61,7 @@ public class ApiMain {
             return response.body(); // Skicka tillbaka svaret
         });
 
-        put("/item/:itemId/update-price", (request, response) -> {
+        put("/bid/:bidValue/:email/:image", (request, response) -> {
           //  database.updatePrice();
             response.body("ANVÄNDARE BUDAR PÅ ITEM");
             response.status(200);

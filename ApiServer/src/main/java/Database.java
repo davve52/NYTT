@@ -28,9 +28,12 @@ public class Database{
 
     public void updatePrice(String email, int price, String image){
         PreparedStatement ps = null;
+        System.out.println(email + price + image);
         try {
             ps = connection.prepareStatement(
-                    "UPDATE bid SET Email = ?, Bid = ?, Image = ?");
+                    "INSERT INTO bid"
+                            + "(Email, Bid, Image) VALUES"
+                            + "(?,?,?)");
 
             ps.setString(1,email);
             ps.setInt(2,price);
@@ -41,19 +44,17 @@ public class Database{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
     }
 
-    public List<Bid> getHighBidder(){
-        List<Bid> bids = new ArrayList<Bid>();
+    public Bid getHighBidder(){
+        Bid bid = null;
         try {
             Statement statement = connection.createStatement();
 
-            ResultSet rs = statement.executeQuery("SELECT * FROM bid");
+            ResultSet rs = statement.executeQuery("SELECT * FROM bid where Bid = (SELECT MAX(Bid) from Bid)");
             while (rs.next()) {
-                Bid bid = new Bid(rs.getString("Email"), rs.getInt("Bid"), rs.getString("Image"));
-                bids.add(bid);
+                bid = new Bid(rs.getString("Email"), rs.getInt("Bid"), rs.getString("Image"));
+
             }
 
             statement.close();
@@ -61,7 +62,21 @@ public class Database{
         catch(SQLException e) {
             e.printStackTrace();
         }
-        return bids;
+        return bid;
+    }
+
+    public void clearDatabase(){
+        PreparedStatement ps = null;
+
+        try {
+            ps = connection.prepareStatement(
+                    "TRUNCATE TABLE bid");
+
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

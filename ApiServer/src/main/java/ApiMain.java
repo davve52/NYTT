@@ -3,6 +3,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 
 import static spark.Spark.*;
@@ -24,18 +25,24 @@ import spark.Spark;
  * Created by davve on 2016-10-12.
  */
 public class ApiMain {
-    private static Image image = new Image();;
-    //private static Database database = new Database();
+    private static Image image = new Image();
+    private static Database database;
     private static Boolean bool = true;
+    private static Boolean startDatabase = true;
 
     public static void main(String[]args) throws ClassNotFoundException {
         ApiMain.apply();
 
+        if (startDatabase){
+            database = new Database();
+            startDatabase = false;
+        }
+
         get("/image", (request, response) -> {
             String imageURL;
             if (bool || isBridegeOpen()){
-                System.out.println("Första");
-
+                Bid winner = database.getHighBidder(); // VINNARE AV BILDEN GÖR NÅGOT AV DET OM MAN VILL
+                database.clearDatabase();
                 uploadImageToWebb();
                 imageURL = showImageToUser();
                 response.body(imageURL);
@@ -45,8 +52,19 @@ public class ApiMain {
 
             } else{
                 System.out.println("VISA BARA BILDEN");
+                Bid highBidder = database.getHighBidder();
                 imageURL = showImageToUser();
-                response.body(imageURL);
+
+                JSONObject jo = new JSONObject();
+                jo.put("image", imageURL);
+                jo.put("highBid", highBidder.getBid());
+
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.put(jo);
+
+                JSONObject mainObj = new JSONObject();
+                mainObj.put("responseData", jsonArray);
+                response.body(String.valueOf(mainObj));
                 response.status(200);
                 request.headers("Accept");
             }
@@ -54,41 +72,18 @@ public class ApiMain {
             return response.body(); // Skicka tillbaka svaret
         });
 
-        get("/item/next-week", (request, response) -> {
-            response.body("ITEM FÖR NÄSTA VECKA");
-            response.status(200);
-            request.headers("Accept");
-            return response.body(); // Skicka tillbaka svaret
-        });
+        get("/bid", (request, response) -> {
+            System.out.println(request.body().toString());
+            String bidValue = request.queryParams("bidValue");
+            String email = request.queryParams("email");
+            String image = request.queryParams("image");
 
-        put("/bid/:bidValue/:email/:image", (request, response) -> {
-          //  database.updatePrice();
+            database.updatePrice(email, Integer.parseInt(bidValue), image);
             response.body("ANVÄNDARE BUDAR PÅ ITEM");
             response.status(200);
             request.headers("Accept");
             return response.body(); // Skicka tillbaka svaret
         });
-    }
-
-    private static void startBackgroundWork() {
-        Thread t1 = new Thread(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (isBridegeOpen()) {
-
-                        uploadImageToWebb();
-
-                    }
-                }
-            }
-
-        });
-        t1.start();
     }
 
     private static final HashMap<String, String> corsHeaders = new HashMap<String, String>();

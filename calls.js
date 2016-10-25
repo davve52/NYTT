@@ -1,41 +1,32 @@
 $(document).ready(function(){
-    $.ajax({
-          url:"http://localhost:4567/image" ,
-          })
-          .done(function (data) {
-            console.log(data);
-            var res = data.substring(10,100);
-            console.log(res);
-            $('#blurredIMG').attr('src', res);
-            $('input[name="image"]').val(res);
-       
+  $.ajax({
+          url: "http://api-server-mah.herokuapp.com/image",
+             cache: false,
+            success: function(data) {
+              console.log(data);
+              /*
+                var firstString = data.substring(10);
+                var finalPath = firstString.substring(0,firstString.indexOf("'"));
+                console.log(firstString + " ------------------ " + finalPath);
+                $('#blurredIMG').attr('src', finalPath);
+                $('input[name="image"]').val(finalPath);
+                */
+            },
+               error: function (request, status, error) {
+                alert(status + ", " + error);
+
+            }
         });
 });
 
-
-function formSubmit(){
-    console.log("FUCKKKKK");
+$("#sendBid").on("click", function(){
+    var bid = $('#bidValue').val();
+    var email = $('#email').val();
+    var image = $('#image').val();
     $.ajax({
-       url: "http://localhost:4567/bid",
-       data: $("#bid").serialize(),
-       success: function(data){
-           console.log(data);
-       }
+        url: "http://api-server-mah.herokuapp.com/bid?bidValue=" + bid +"&email="+ email + "&image="+image,
+          cache: false,
+    }).done(function(data){
+      console.log(data);
     });
-}
-/*
-$("#bid").submit(function(e){
-    var url = "http://localhost:4567/bid"
-    
-    $.ajax({
-       type: "POST",
-       url: url,
-       data: $("#bid").serialize(),
-       success: function(data){
-           console.log(data);
-       }
-    });
-    e.preventDefault();
 });
-*/
-

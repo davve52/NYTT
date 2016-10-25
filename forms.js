@@ -1,4 +1,4 @@
-$( document ).ready(function() {
+$(document).ready(function() {
   var form = document.getElementById('forms');
   var createForm = document.createElement('form');
   createForm.setAttribute("action", "server.php");

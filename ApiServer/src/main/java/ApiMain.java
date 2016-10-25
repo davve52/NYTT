@@ -1,13 +1,12 @@
 
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 
 import static spark.Spark.*;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -16,10 +15,8 @@ import com.mashape.unirest.request.GetRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import spark.Filter;
-import spark.Request;
-import spark.Response;
-import spark.Spark;
+import spark.*;
+
 
 /**
  * Created by davve on 2016-10-12.
@@ -29,14 +26,19 @@ public class ApiMain {
     private static Database database;
     private static Boolean bool = true;
     private static Boolean startDatabase = true;
+    private static Gson gson;
 
-    public static void main(String[]args) throws ClassNotFoundException {
-        ApiMain.apply();
+    public static void main(String[] args) throws ClassNotFoundException {
+        port(getHerokuAssignedPort());
 
         if (startDatabase){
+            enableCORS();
             database = new Database();
+            gson = new GsonBuilder().create();
             startDatabase = false;
+
         }
+
 
         get("/image", (request, response) -> {
             String imageURL;
@@ -52,19 +54,11 @@ public class ApiMain {
 
             } else{
                 System.out.println("VISA BARA BILDEN");
-                Bid highBidder = database.getHighBidder();
                 imageURL = showImageToUser();
-
-                JSONObject jo = new JSONObject();
-                jo.put("image", imageURL);
-                jo.put("highBid", highBidder.getBid());
-
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.put(jo);
-
-                JSONObject mainObj = new JSONObject();
-                mainObj.put("responseData", jsonArray);
-                response.body(String.valueOf(mainObj));
+                Bid bid = database.getHighBidder();
+                String json = gson.toJson(bid);
+                System.out.println(json);
+                response.body(imageURL);
                 response.status(200);
                 request.headers("Accept");
             }
@@ -85,27 +79,31 @@ public class ApiMain {
             return response.body(); // Skicka tillbaka svaret
         });
     }
+    // Enables CORS on requests. This method is an initialization method and should be called once.
+    private static void enableCORS() {
 
-    private static final HashMap<String, String> corsHeaders = new HashMap<String, String>();
+        options("/*", (request, response) -> {
 
-    static {
-        corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-        corsHeaders.put("Access-Control-Allow-Origin", "*");
-        corsHeaders.put("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,");
-        corsHeaders.put("Access-Control-Allow-Credentials", "true");
-    }
-
-    public final static void apply() {
-        Filter filter = new Filter() {
-
-            @Override
-            public void handle(Request request, Response response) throws Exception {
-                corsHeaders.forEach((key, value) -> {
-                    response.header(key, value);
-                });
+            String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+            if (accessControlRequestHeaders != null) {
+                response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
             }
-        };
-        Spark.after(filter);
+
+            String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+            if (accessControlRequestMethod != null) {
+                response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+            }
+
+            return "OK";
+        });
+
+        before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", "*" );
+            response.header("Access-Control-Request-Method", "GET,PUT,POST,DELETE,OPTIONS");
+            response.header("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,");
+            // Note: this may or may not be necessary in your particular application
+            response.type("application/html");
+        });
     }
 
     private static String getRandomNumberApi(int size){
@@ -185,4 +183,15 @@ public class ApiMain {
     private static String showImageToUser(){
         return image.getImage();
     }
+
+
+    private static int getHerokuAssignedPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
+    }
+
+
 }

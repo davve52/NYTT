@@ -2,8 +2,10 @@ $(document).ready(function(){
   $.ajax({
           url: "http://api-server-mah.herokuapp.com/image",
              cache: false,
+             dataType: "json",
             success: function(data) {
-              console.log(data);
+              var jsonString = JSON.stringify(data);
+              console.log(jsonString);
               /*
                 var firstString = data.substring(10);
                 var finalPath = firstString.substring(0,firstString.indexOf("'"));

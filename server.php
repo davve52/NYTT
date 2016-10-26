@@ -11,7 +11,7 @@ if(isset($_FILES['image']['tmp_name'])){
 		if(mysqli_query($db, "INSERT INTO item (Title, Image, Description) VALUES ('".$_POST['title']."', '".$fileName."', '".$_POST['desc']."')")){
 			$return['success'] = true;
 			$return['message'] = "Fil uppladdad & sparad i db";
-			echo json_encode($return);
+			echo header('Location: ' . $_SERVER['HTTP_REFERER']);
 		}else{
 			$return['success'] = false;
 			$return['message'] = "Fil uppladdad men inte sparad i db";

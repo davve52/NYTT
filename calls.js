@@ -5,11 +5,11 @@ $(document).ready(function(){
              dataType: "json",
             success: function(data) {
               console.log(data);
-                
-                
-                
+
+
+
             var resp = data.responseData;
-        
+
             for ( var i in resp) {
 		      var image = resp[i].image;
 		      var bid = resp[i].highBid;
@@ -19,11 +19,11 @@ $(document).ready(function(){
                 var finalPath = firstString.substring(0,firstString.indexOf("'"));
                 $('#blurredIMG').attr('src', finalPath);
                 $('input[name="image"]').val(finalPath);
-                
-                $('#highBid').text("HÖGSTA BUD:" +bid);  
-                
-	}   
-                
+
+                $('#highBid').text("HÖGSTA BUD:" +bid);
+
+	}
+
             },
                error: function (request, status, error) {
                 alert(status + ", " + error);

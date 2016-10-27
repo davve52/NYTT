@@ -49,6 +49,11 @@ ul.topnav li a:hover {background-color: #555;}
   font-size: 20px;
   color:#2BC1F2 ;
 }
+#formDesc{
+  text-align: center;
+  font-size: 20px;
+  color:#2BC1F2 ;
+}
 
 footer{
 	display: block;
@@ -104,6 +109,15 @@ input[type="button"]{
   margin-bottom: 2%;
 
 }
+input[type="textarea"]{
+  width:100%;
+  margin-top:10px;
+  height:35px;
+  margin-bottom:25px;
+  padding:10px;
+  border:1px solid #2BC1F2;
+}
+
 
 label{
   float:left;
@@ -119,4 +133,35 @@ label{
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+#myForm{
+  text-align:center;
+  width:50%;
+  padding:0 50px 15px;
+  margin-top:20px;
+  border-radius:6px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+input[type="submit"]{
+  width:60%;
+  padding:10px 45px;
+  background-color:#2BC1F2;
+  border:none;
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:'Ubuntu',sans-serif;
+  margin-bottom: 2%;
+
+}
+input[type="file"]{
+  width:100%;
+  margin-top:10px;
+  height:35px;
+  margin-bottom:25px;
+  padding:10px;
+  border:1px solid #2BC1F2;
 }

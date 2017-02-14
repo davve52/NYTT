@@ -1,5 +1,5 @@
 <?php
-$db = mysqli_connect("dvwebb.mah.se", "AE3529", "guldfisk1337", "ae3529");
+$db = mysqli_connect("dvwebb.mah.se", "USERNAM", "PASSWORD", "USERNAME");
 
 $return = new ArrayObject();
 
